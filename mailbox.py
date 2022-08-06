@@ -18,7 +18,7 @@ import email.message
 import email.generator
 import io
 import contextlib
-from types import GenericAlias
+# from types import GenericAlias
 try:
     import fcntl
 except ImportError:
@@ -261,7 +261,7 @@ class Mailbox:
         else:
             raise TypeError('Invalid message type: %s' % type(message))
 
-    __class_getitem__ = classmethod(GenericAlias)
+    # __class_getitem__ = classmethod(GenericAlias)
 
 
 class Maildir(Mailbox):
@@ -2023,7 +2023,7 @@ class _ProxyFile:
             return False
         return self._file.closed
 
-    __class_getitem__ = classmethod(GenericAlias)
+    # __class_getitem__ = classmethod(GenericAlias)
 
 
 class _PartialFile(_ProxyFile):
