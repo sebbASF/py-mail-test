@@ -1,0 +1,22 @@
+name: mail test
+on:
+  push:
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [macos-latest, windows-latest]
+        python: ['3.10']
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+    - name: Check
+      run: |
+        python -V
+        python mbtest.py
