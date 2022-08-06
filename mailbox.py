@@ -835,7 +835,9 @@ class _mboxMMDF(_singlefileMailbox):
         return (start, stop)
 
 # This is the full syntax, i.e. From sender asctime[ moreinfo]
-MBOX_STRICT_RE = b'From \\S+ (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?\\Z'
+DAY_RE = b' (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)'
+MON_RE = b' (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)'
+STRICT_RE = b'From \\S+' + DAY_RE + MON_RE + b' [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?\\r?\\n\\Z'
 # we capture the optional moreinfo group so we can check for lines that end in the date
 
 class mbox(_mboxMMDF):
@@ -855,20 +857,20 @@ class mbox(_mboxMMDF):
             self._from_matcher = lambda line: line.startswith(b'From ')
         elif from_matcher == 'full':
             import re
-            self._regex = re.compile(MBOX_STRICT_RE) # compile once
-            # we strip the line-ending to make matching easier
-            self._from_matcher = lambda line: re.match(self._regex, line.rstrip(b'\r\n'))
+            self._regex = re.compile(STRICT_RE) # compile once
+            self._from_matcher = lambda line: re.match(self._regex, line)
         elif from_matcher == 'date': # From sender date (no extra info)
             import re
-            self._regex = re.compile(MBOX_STRICT_RE)
-            self._from_matcher = self._match_date
+            self._regex = re.compile(STRICT_RE)  # compile once
+            self._from_matcher = self._match_date # cannot express this in a lambda
         else: # assume it is a boolean function with one parameter
             self._from_matcher = from_matcher
         _mboxMMDF.__init__(self, path, factory, create)
 
     def _match_date(self, line):
         import re
-        m = re.match(self._regex, line.rstrip(b'\r\n'))
+        m = re.match(self._regex, line)
+        # check for no trailing info
         return m is not None and m.group(1) is None
 
     def _post_message_hook(self, f):
