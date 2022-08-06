@@ -36,6 +36,7 @@ class TestMbox:
 
     def test_read_mbox_omitted(self):
         self._test_read_mbox()
+        print(repr(open(self._box._path).read()))
 
     def test_read_mbox_none(self):
         self._test_read_mbox(None)
