@@ -3,13 +3,11 @@
 import os
 import re
 import mailbox
+import tempfile
 
 class TestMbox:
-    def __init__(self):
-        self._path = '/tmp/test.mbox'
-
     def setup(self):
-        os.unlink(self._path)
+        self._path = os.path.join(tempfile.mkdtemp(), 'test.mbox')
         self._box = mailbox.mbox(self._path)
 
     def assertEqual(self, actual, expected):
