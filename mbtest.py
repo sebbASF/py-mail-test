@@ -36,7 +36,6 @@ class TestMbox:
 
     def test_read_mbox_omitted(self):
         self._test_read_mbox()
-        print(repr(open(self._box._path).read()))
 
     def test_read_mbox_none(self):
         self._test_read_mbox(None)
@@ -54,9 +53,17 @@ class TestMbox:
         # invalid, so don't find any messages
         self._test_read_mbox(lambda line: re.match(b'From .+ \\d\\d\\d\\r?\\n', line), count=0)
 
+    def test_read_mbox_full(self):
+        self._test_read_mbox('full', count=1)
+
+    def test_read_mbox_date(self):
+        self._test_read_mbox('date', count=1)
+
 tm = TestMbox()
 tm.test_read_mbox_omitted()
 tm.test_read_mbox_none()
 tm.test_read_mbox_default()
 tm.test_read_mbox_regex1()
 tm.test_read_mbox_regex2()
+tm.test_read_mbox_full()
+tm.test_read_mbox_date()

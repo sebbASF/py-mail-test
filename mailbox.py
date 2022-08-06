@@ -834,6 +834,9 @@ class _mboxMMDF(_singlefileMailbox):
         stop = self._file.tell()
         return (start, stop)
 
+# This is the full syntax, i.e. From sender asctime[ moreinfo]
+MBOX_STRICT_RE = b'From \\S+ (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?\\Z'
+# we capture the optional moreinfo group so we can check for lines that end in the date
 
 class mbox(_mboxMMDF):
     """A classic mbox mailbox."""
@@ -850,9 +853,23 @@ class mbox(_mboxMMDF):
         if from_matcher is None:
             # default to original matcher
             self._from_matcher = lambda line: line.startswith(b'From ')
-        else:
+        elif from_matcher == 'full':
+            import re
+            self._regex = re.compile(MBOX_STRICT_RE) # compile once
+            # we strip the line-ending to make matching easier
+            self._from_matcher = lambda line: re.match(self._regex, line.rstrip(b'\r\n'))
+        elif from_matcher == 'date': # From sender date (no extra info)
+            import re
+            self._regex = re.compile(MBOX_STRICT_RE)
+            self._from_matcher = self._match_date
+        else: # assume it is a boolean function with one parameter
             self._from_matcher = from_matcher
         _mboxMMDF.__init__(self, path, factory, create)
+
+    def _match_date(self, line):
+        import re
+        m = re.match(self._regex, line.rstrip(b'\r\n'))
+        return m is not None and m.group(1) is None
 
     def _post_message_hook(self, f):
         """Called after writing each message to file f."""
