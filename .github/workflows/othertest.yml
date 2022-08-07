@@ -23,4 +23,4 @@ jobs:
     - name: Check
       run: |
         python3 -V
-        python3 -E  -m test test_mailbox
+        python3 -E  Lib/test/test_mailbox.py
