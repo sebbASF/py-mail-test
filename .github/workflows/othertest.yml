@@ -2,7 +2,7 @@ name: mail test
 on:
   push:
     paths-ignore:
-      - '**/workflows/othertest.yml'
+      - '**/workflows/mailtest.yml'
 
   workflow_dispatch:
 
@@ -18,7 +18,9 @@ jobs:
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
+        repository: 'https://github.com/sebbASF/cpython'
+        ref: 'gh-93376'
     - name: Check
       run: |
         python3 -V
-        python3 mbtest.py
+        python3 -E  ./Tools/scripts/run_tests.py  test_mailbox
