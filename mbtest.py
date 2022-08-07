@@ -16,6 +16,7 @@ class TestMbox:
         else:
             print(f"exp: {expected}")
             print(f"act: {actual}")
+            raise Exception('Failed')
 
     # Test reading an mbox file with un-prefixed From in body text
     # currently generates 2 messages
