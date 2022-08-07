@@ -834,14 +834,14 @@ class _mboxMMDF(_singlefileMailbox):
         stop = self._file.tell()
         return (start, stop)
 
-# This is the full syntax, i.e. From sender asctime[ moreinfo]
-DAY_RE = b' (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)'
-MON_RE = b' (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)'
-STRICT_RE = b'From \\S+' + DAY_RE + MON_RE + b' [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?\\r?\\n\\Z'
-# we capture the optional moreinfo group so we can check for lines that end in the date
-
 class mbox(_mboxMMDF):
     """A classic mbox mailbox."""
+
+    # This is the full syntax, i.e. From sender asctime[ moreinfo]
+    DAY_RE = b' (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)'
+    MON_RE = b' (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)'
+    STRICT_RE = b'From \\S+' + DAY_RE + MON_RE + b' [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?\\r?\\n\\Z'
+    # we capture the optional moreinfo group so we can check for lines that end in the date
 
     _mangle_from_ = True
 
@@ -855,23 +855,22 @@ class mbox(_mboxMMDF):
         if from_matcher is None:
             # default to original matcher
             self._from_matcher = lambda line: line.startswith(b'From ')
-        elif from_matcher == 'full':
+        elif from_matcher == 'full': # From sender date[ moreinfo]
             import re
-            self._regex = re.compile(STRICT_RE) # compile once
-            self._from_matcher = lambda line: re.match(self._regex, line)
+            regex = re.compile(self.STRICT_RE) # compile once
+            self._from_matcher = lambda line: re.match(regex, line)
         elif from_matcher == 'date': # From sender date (no extra info)
             import re
-            self._regex = re.compile(STRICT_RE)  # compile once
-            self._from_matcher = self._match_date # cannot express this in a lambda
+            regex = re.compile(self.STRICT_RE)  # compile once
+            def _match_date(line):
+                m = re.match(regex, line)
+                # check for no trailing info
+                return m is not None and m.group(1) is None
+            self._from_matcher = _match_date # cannot express this in a lambda
         else: # assume it is a boolean function with one parameter
             self._from_matcher = from_matcher
         _mboxMMDF.__init__(self, path, factory, create)
 
-    def _match_date(self, line):
-        import re
-        m = re.match(self._regex, line)
-        # check for no trailing info
-        return m is not None and m.group(1) is None
 
     def _post_message_hook(self, f):
         """Called after writing each message to file f."""
