@@ -1,4 +1,4 @@
-name: mail test
+name: other test
 on:
   push:
     paths-ignore:
@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
-        repository: 'https://github.com/sebbASF/cpython'
+        repository: 'sebbASF/cpython'
         ref: 'gh-93376'
     - name: Check
       run: |
