@@ -4,6 +4,7 @@ import os
 import re
 import mailbox
 import tempfile
+import email
 
 class TestMbox:
     def setup(self):
@@ -57,8 +58,11 @@ class TestMbox:
     def test_read_mbox_full(self):
         self._test_read_mbox('full', count=1)
 
-    def test_read_mbox_date(self):
-        self._test_read_mbox('date', count=1)
+    def test_read_mbox_full2(self):
+        self._box.close()
+        with open('msg_47.txt', encoding="utf-8") as fp:
+            self._box = email.message_from_file(fp)
+        self._test_read_mbox('full', count=1)
 
 tm = TestMbox()
 tm.test_read_mbox_omitted()
@@ -67,4 +71,4 @@ tm.test_read_mbox_default()
 tm.test_read_mbox_regex1()
 tm.test_read_mbox_regex2()
 tm.test_read_mbox_full()
-tm.test_read_mbox_date()
+tm.test_read_mbox_full2()
