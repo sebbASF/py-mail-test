@@ -840,8 +840,8 @@ class mbox(_mboxMMDF):
     # This is the full syntax, i.e. From sender asctime[ moreinfo]
     DAY_RE = b' (?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)'
     MON_RE = b' (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)'
-    STRICT_RE = (b'From \\S+' + DAY_RE + MON_RE + 
-        b' [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}( .+)?' + linesep + b'\\Z')
+    DTY_RE = b' [ 0]\\d \\d\\d:\\d\\d:\\d\\d \\d{4}' # day, time, year
+    STRICT_RE = b'From \\S+' + DAY_RE + MON_RE + DTY_RE + b' ( .+)?' + linesep + b'\\Z'
     # we capture the optional moreinfo group so we can check for lines that end in the date
 
     _mangle_from_ = True
