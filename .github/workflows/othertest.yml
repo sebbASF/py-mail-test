@@ -21,11 +21,11 @@ jobs:
         repository: 'sebbASF/cpython'
         ref: 'gh-93376'
     - name: Check
-      env:
-        EXTRATESTOPTS: "-v test_mailbox"
       run: |
         python3 -V
+        ls
         ./configure
+        ls
         make
-        make test
+        make test TESTOPTS: "-v test_mailbox"
         
