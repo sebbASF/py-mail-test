@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
         python: ['3.10']
     runs-on: ${{ matrix.os }}
     steps:
@@ -20,11 +20,11 @@ jobs:
         persist-credentials: false
         repository: 'sebbASF/cpython'
         ref: 'gh-93376'
-        depth: 0
     - name: Check
       env:
         EXTRATESTOPTS: "-v test_mailbox"
       run: |
         python3 -V
+        make
         make test
         
