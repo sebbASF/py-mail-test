@@ -20,7 +20,11 @@ jobs:
         persist-credentials: false
         repository: 'sebbASF/cpython'
         ref: 'gh-93376'
+        depth: 0
     - name: Check
+      env:
+        EXTRATESTOPTS: "-v test_mailbox"
       run: |
         python3 -V
-        python3 -m unittest test.test_mailbox
+        make test
+        
