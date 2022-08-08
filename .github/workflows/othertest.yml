@@ -25,6 +25,7 @@ jobs:
         EXTRATESTOPTS: "-v test_mailbox"
       run: |
         python3 -V
+        ./configure
         make
         make test
         
