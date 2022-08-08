@@ -20,12 +20,12 @@ jobs:
         persist-credentials: false
         repository: 'sebbASF/cpython'
         ref: 'gh-93376'
+    - name: Build CPython
+      run: .\PCbuild\build.bat -e -d -p Win32
+      timeout-minutes: 10
     - name: Check
       run: |
-        python3 -V
-        ls
-        ./configure
-        ls
-        make
-        make test TESTOPTS: "-v test_mailbox"
+        .\python.bat -m test.pythoninfo
+    - name: Tests
+      run: .\PCbuild\rt.bat -p Win32 -d -q test_mailbox
         
